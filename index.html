@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Color Palette</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Inter:wght@400;500;600&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #ffffff;
+    font-family: 'Inter', sans-serif;
+    padding: 36px 28px;
+    color: #111;
+  }
+
+  h1 {
+    font-size: 20px;
+    letter-spacing: 0.01em;
+    color: #111;
+    margin-bottom: 28px;
+    font-weight: 600;
+  }
+
+  .section {
+    margin-bottom: 32px;
+  }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #aaa;
+    margin-bottom: 12px;
+  }
+
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .card {
+    width: 110px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #e5e7eb;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  }
+
+  .card-swatch {
+    width: 100%;
+    height: 72px;
+    position: relative;
+  }
+
+  .card-swatch::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+  }
+
+  .card-body {
+    padding: 8px 10px;
+    background: #fff;
+  }
+
+  .card-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .card-hex {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #999;
+  }
+
+  .card-actions {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+  }
+
+  .copy-btn, .delete-btn {
+    flex: 1;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-radius: 4px;
+    padding: 3px 0;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid #e5e7eb;
+    background: none;
+    color: #aaa;
+  }
+
+  .delete-btn:hover { border-color: #ffaaaa; color: #e05555; }
+
+  /* Add row */
+  .add-section {
+    margin-top: 8px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  input {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    color: #111;
+    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 7px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input:focus { border-color: #48AA66; }
+  input::placeholder { color: #ccc; }
+
+  .hex-input { width: 110px; font-family: 'JetBrains Mono', monospace; }
+  .name-input { flex: 1; min-width: 160px; }
+
+  .add-btn {
+    background: #48AA66;
+    border: none;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 8px 18px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+    white-space: nowrap;
+  }
+
+  .add-btn:hover { opacity: 0.85; }
+
+  .error-msg {
+    font-size: 11px;
+    color: #e05555;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<h1>Color Palette</h1>
+<div id="paletteContainer"></div>
+
+<div class="add-section">
+  <input class="hex-input" id="hexInput" type="text" placeholder="#RRGGBB" maxlength="7">
+  <input class="name-input" id="nameInput" type="text" placeholder="색상 이름 (예: Primary/Light)">
+  <button class="add-btn" onclick="addColor()">+ 추가</button>
+  <span class="error-msg" id="errorMsg">올바른 HEX 코드를 입력하세요</span>
+</div>
+
+<script>
+  const defaultColors = [
+    { group: 'Main Color', colors: [
+      { name: 'Default',          hex: '#48AA66' },
+      { name: 'Light',            hex: '#8BBB9A' },
+      { name: 'Dark',             hex: '#3E8A56' },
+      { name: 'Background',       hex: '#F6FAF8' },
+      { name: 'Background/Dark',  hex: '#E9EEEB' },
+    ]},
+    { group: 'State Color', colors: [
+      { name: 'Error',      hex: '#FF0000' },
+      { name: 'Error/Dark', hex: '#DB0000' },
+      { name: 'Info',       hex: '#0063F7' },
+      { name: 'Success',    hex: '#48AA66' },
+    ]},
+    { group: 'Grey Color', colors: [
+      { name: 'White',    hex: '#FFFFFF' },
+      { name: 'Grey/50',  hex: '#F9FAFB' },
+      { name: 'Grey/100', hex: '#F3F4F6' },
+      { name: 'Grey/200', hex: '#E5E7EB' },
+      { name: 'Grey/300', hex: '#D1D5DB' },
+      { name: 'Grey/400', hex: '#9CA3AF' },
+      { name: 'Grey/500', hex: '#6B7280' },
+      { name: 'Grey/600', hex: '#4B5563' },
+      { name: 'Grey/800', hex: '#1F2937' },
+      { name: 'Black',    hex: '#313131' },
+    ]},
+  ];
+
+  let data = JSON.parse(localStorage.getItem('palette_v4') || 'null') || defaultColors;
+
+  function save() { localStorage.setItem('palette_v4', JSON.stringify(data)); }
+
+  function render() {
+    const container = document.getElementById('paletteContainer');
+    container.innerHTML = data.map((section, si) => `
+      <div class="section">
+        <div class="section-title">${section.group}</div>
+        <div class="grid">
+          ${section.colors.map((c, ci) => `
+            <div class="card">
+              <div class="card-swatch" style="background:${c.hex}"></div>
+              <div class="card-body">
+                <div class="card-name">${c.name}</div>
+                <div class="card-hex">${c.hex.toUpperCase()}</div>
+                <div class="card-actions">
+                  <button class="delete-btn" onclick="removeColor(${si},${ci})">삭제</button>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function copyHex(btn, hex) {
+    navigator.clipboard.writeText(hex).then(() => {
+      btn.textContent = '완료!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = '복사'; btn.classList.remove('copied'); }, 1500);
+    });
+  }
+
+  function removeColor(si, ci) {
+    data[si].colors.splice(ci, 1);
+    if (data[si].colors.length === 0) data.splice(si, 1);
+    save(); render();
+  }
+
+  function addColor() {
+    const hex = document.getElementById('hexInput').value.trim();
+    const name = document.getElementById('nameInput').value.trim() || hex;
+    const errorMsg = document.getElementById('errorMsg');
+
+    if (!/^#[0-9A-Fa-f]{6}$/.test(hex)) {
+      errorMsg.style.display = 'inline';
+      document.getElementById('hexInput').style.borderColor = '#ffaaaa';
+      setTimeout(() => { errorMsg.style.display = 'none'; document.getElementById('hexInput').style.borderColor = ''; }, 2000);
+      return;
+    }
+
+    const parts = name.split('/');
+    const groupName = parts.length > 1 ? parts[0] : 'Custom';
+    const existing = data.find(s => s.group === groupName);
+    if (existing) {
+      existing.colors.push({ name: parts.slice(1).join('/') || name, hex });
+    } else {
+      data.push({ group: groupName, colors: [{ name: parts.slice(1).join('/') || name, hex }] });
+    }
+
+    save(); render();
+    document.getElementById('hexInput').value = '';
+    document.getElementById('nameInput').value = '';
+  }
+
+  document.getElementById('hexInput').addEventListener('keydown', e => { if (e.key === 'Enter') addColor(); });
+
+  render();
+</script>
+</body>
+</html>

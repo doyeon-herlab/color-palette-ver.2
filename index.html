@@ -24,9 +24,7 @@
     font-weight: 600;
   }
 
-  .section {
-    margin-bottom: 32px;
-  }
+  .section { margin-bottom: 32px; }
 
   .section-title {
     font-size: 11px;
@@ -43,13 +41,18 @@
     gap: 10px;
   }
 
+  /* Card */
   .card {
     width: 110px;
     border-radius: 10px;
     overflow: hidden;
     border: 1px solid #e5e7eb;
-    cursor: pointer;
     transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.08);
   }
 
   .card-swatch {
@@ -92,35 +95,57 @@
     margin-top: 6px;
   }
 
-  .copy-btn, .delete-btn {
+  .edit-btn, .delete-btn {
     flex: 1;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: 'Inter', sans-serif;
     font-size: 9px;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0.03em;
     border-radius: 4px;
-    padding: 3px 0;
+    padding: 4px 0;
     cursor: pointer;
     transition: all 0.15s;
-    border: 1px solid #e5e7eb;
+    border: 1px solid transparent;
     background: none;
-    color: #aaa;
+    color: #bbb;
   }
 
-  .delete-btn:hover { border-color: #ffaaaa; color: #e05555; }
+  .edit-btn:hover {
+    border-color: #93c5fd;
+    color: #3b82f6;
+  }
 
-  /* Add row */
+  .delete-btn:hover {
+    border-color: #fca5a5;
+    color: #e05555;
+  }
+
+  /* Add section */
   .add-section {
     margin-top: 8px;
     padding-top: 20px;
     border-top: 1px solid #e5e7eb;
     display: flex;
     gap: 8px;
-    align-items: center;
+    align-items: flex-start;
     flex-wrap: wrap;
   }
 
-  input {
+  .add-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .add-field label {
+    font-size: 10px;
+    font-weight: 600;
+    color: #aaa;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  input[type="text"] {
     background: #fff;
     border: 1px solid #e5e7eb;
     color: #111;
@@ -131,12 +156,97 @@
     transition: border-color 0.2s;
   }
 
-  input:focus { border-color: #48AA66; }
-  input::placeholder { color: #ccc; }
+  input[type="text"]:focus { border-color: #48AA66; }
+  input[type="text"]::placeholder { color: #ccc; }
 
-  .hex-input { width: 110px; font-family: 'JetBrains Mono', monospace; }
-  .name-input { flex: 1; min-width: 160px; }
+  .hex-input { width: 120px; font-family: 'JetBrains Mono', monospace; }
+  .name-input { width: 160px; }
 
+  /* Group dropdown */
+  .group-wrapper {
+    position: relative;
+  }
+
+  .group-display {
+    width: 150px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    color: #111;
+    font-size: 13px;
+    padding: 8px 12px;
+    border-radius: 7px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    user-select: none;
+    transition: border-color 0.2s;
+  }
+
+  .group-display:hover, .group-display.open { border-color: #48AA66; }
+
+  .group-display .arrow {
+    font-size: 10px;
+    color: #aaa;
+    transition: transform 0.2s;
+  }
+
+  .group-display.open .arrow { transform: rotate(180deg); }
+
+  .group-placeholder { color: #ccc; }
+
+  .dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 150px;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    z-index: 100;
+    overflow: hidden;
+  }
+
+  .dropdown.open { display: block; }
+
+  .dropdown-item {
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #111;
+    cursor: pointer;
+    transition: background 0.1s;
+  }
+
+  .dropdown-item:hover { background: #f3f4f6; }
+  .dropdown-item.selected { color: #48AA66; font-weight: 600; }
+
+  .dropdown-add-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+    color: #48AA66;
+    font-weight: 600;
+    cursor: pointer;
+    border-top: 1px solid #f3f4f6;
+    transition: background 0.1s;
+  }
+
+  .dropdown-add-btn:hover { background: #f0faf4; }
+
+  .new-group-input {
+    padding: 6px 10px;
+    border-top: 1px solid #f3f4f6;
+  }
+
+  .new-group-input input {
+    width: 100%;
+    font-size: 12px;
+    padding: 5px 8px;
+    border-radius: 5px;
+  }
+
+  /* Add button */
   .add-btn {
     background: #48AA66;
     border: none;
@@ -149,6 +259,7 @@
     cursor: pointer;
     transition: opacity 0.2s;
     white-space: nowrap;
+    align-self: flex-end;
   }
 
   .add-btn:hover { opacity: 0.85; }
@@ -157,6 +268,128 @@
     font-size: 11px;
     color: #e05555;
     display: none;
+    align-self: flex-end;
+    padding-bottom: 10px;
+  }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: #fff;
+    border-radius: 12px;
+    width: 320px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    overflow: hidden;
+  }
+
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f3f4f6;
+  }
+
+  .modal-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111;
+  }
+
+  .modal-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #aaa;
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px 4px;
+    border-radius: 4px;
+    transition: color 0.15s;
+  }
+
+  .modal-close:hover { color: #111; }
+
+  .modal-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .modal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .modal-field label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #aaa;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .modal-field input {
+    width: 100%;
+  }
+
+  .modal-footer {
+    padding: 14px 20px;
+    border-top: 1px solid #f3f4f6;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .modal-cancel {
+    background: none;
+    border: 1px solid #e5e7eb;
+    color: #888;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    padding: 7px 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .modal-cancel:hover { border-color: #aaa; color: #111; }
+
+  .modal-save {
+    background: #48AA66;
+    border: none;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 7px 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .modal-save:hover { opacity: 0.85; }
+
+  /* Swatch preview in modal */
+  .modal-preview {
+    width: 100%;
+    height: 48px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    transition: background 0.2s;
   }
 </style>
 </head>
@@ -166,22 +399,76 @@
 <div id="paletteContainer"></div>
 
 <div class="add-section">
-  <input class="hex-input" id="hexInput" type="text" placeholder="#RRGGBB" maxlength="7">
-  <input class="name-input" id="nameInput" type="text" placeholder="색상 이름 (예: Primary/Light)">
+  <!-- Group dropdown -->
+  <div class="add-field">
+    <label>그룹</label>
+    <div class="group-wrapper">
+      <div class="group-display" id="groupDisplay" onclick="toggleDropdown()">
+        <span id="groupDisplayText" class="group-placeholder">그룹 선택</span>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="dropdown" id="groupDropdown">
+        <div id="dropdownItems"></div>
+        <div class="dropdown-add-btn" id="dropdownAddBtn" onclick="showNewGroupInput()">+ 그룹 추가</div>
+        <div class="new-group-input" id="newGroupInputWrap" style="display:none">
+          <input type="text" id="newGroupInput" placeholder="새 그룹 이름" onkeydown="handleNewGroup(event)">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HEX input -->
+  <div class="add-field">
+    <label>HEX 코드</label>
+    <input class="hex-input" id="hexInput" type="text" placeholder="48AA66" maxlength="7"
+      oninput="formatHex(this)" onkeydown="if(event.key==='Enter') addColor()">
+  </div>
+
+  <!-- Name input -->
+  <div class="add-field">
+    <label>색상 이름</label>
+    <input class="name-input" id="nameInput" type="text" placeholder="색상 이름"
+      onkeydown="if(event.key==='Enter') addColor()">
+  </div>
+
   <button class="add-btn" onclick="addColor()">+ 추가</button>
   <span class="error-msg" id="errorMsg">올바른 HEX 코드를 입력하세요</span>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">컬러 수정</span>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-preview" id="modalPreview"></div>
+      <div class="modal-field">
+        <label>HEX 코드</label>
+        <input type="text" id="modalHex" placeholder="48AA66" maxlength="7"
+          oninput="formatHex(this); updateModalPreview()">
+      </div>
+      <div class="modal-field">
+        <label>색상 이름</label>
+        <input type="text" id="modalName" placeholder="색상 이름">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-cancel" onclick="closeModal()">취소</button>
+      <button class="modal-save" onclick="saveModal()">저장</button>
+    </div>
+  </div>
 </div>
 
 <script>
   const defaultColors = [
     { group: 'Main Color', colors: [
-      { name: 'Default',          hex: '#48AA66' },
-      { name: 'Light',            hex: '#8BBB9A' },
-      { name: 'Dark',             hex: '#3E8A56' },
-    ]},
-    { group: 'Background Color', colors: [
-      { name: 'Default',       hex: '#F6FAF8' },
-      { name: 'Dark',          hex: '#E9EEEB' },
+      { name: 'Default',         hex: '#48AA66' },
+      { name: 'Light',           hex: '#8BBB9A' },
+      { name: 'Dark',            hex: '#3E8A56' },
+      { name: 'Background',      hex: '#F6FAF8' },
+      { name: 'Background/Dark', hex: '#E9EEEB' },
     ]},
     { group: 'State Color', colors: [
       { name: 'Error',      hex: '#FF0000' },
@@ -203,10 +490,13 @@
     ]},
   ];
 
-  let data = JSON.parse(localStorage.getItem('palette_v4') || 'null') || defaultColors;
+  let data = JSON.parse(localStorage.getItem('palette_v5') || 'null') || defaultColors;
+  let selectedGroup = null;
+  let editTarget = null; // { si, ci }
 
-  function save() { localStorage.setItem('palette_v4', JSON.stringify(data)); }
+  function save() { localStorage.setItem('palette_v5', JSON.stringify(data)); }
 
+  /* ── Render ── */
   function render() {
     const container = document.getElementById('paletteContainer');
     container.innerHTML = data.map((section, si) => `
@@ -217,9 +507,10 @@
             <div class="card">
               <div class="card-swatch" style="background:${c.hex}"></div>
               <div class="card-body">
-                <div class="card-name">${c.name}</div>
+                <div class="card-name" title="${c.name}">${c.name}</div>
                 <div class="card-hex">${c.hex.toUpperCase()}</div>
                 <div class="card-actions">
+                  <button class="edit-btn" onclick="openModal(${si},${ci})">수정</button>
                   <button class="delete-btn" onclick="removeColor(${si},${ci})">삭제</button>
                 </div>
               </div>
@@ -228,49 +519,148 @@
         </div>
       </div>
     `).join('');
+    renderDropdownItems();
   }
 
-  function copyHex(btn, hex) {
-    navigator.clipboard.writeText(hex).then(() => {
-      btn.textContent = '완료!';
-      btn.classList.add('copied');
-      setTimeout(() => { btn.textContent = '복사'; btn.classList.remove('copied'); }, 1500);
-    });
+  /* ── Dropdown ── */
+  function renderDropdownItems() {
+    const wrap = document.getElementById('dropdownItems');
+    wrap.innerHTML = data.map(s => `
+      <div class="dropdown-item ${selectedGroup === s.group ? 'selected' : ''}"
+        onclick="selectGroup('${s.group.replace(/'/g,"\\'")}')">
+        ${s.group}
+      </div>
+    `).join('');
   }
 
-  function removeColor(si, ci) {
-    data[si].colors.splice(ci, 1);
-    if (data[si].colors.length === 0) data.splice(si, 1);
-    save(); render();
+  function toggleDropdown() {
+    const dd = document.getElementById('groupDropdown');
+    const disp = document.getElementById('groupDisplay');
+    const isOpen = dd.classList.contains('open');
+    closeDropdown();
+    if (!isOpen) {
+      dd.classList.add('open');
+      disp.classList.add('open');
+      renderDropdownItems();
+    }
   }
 
+  function closeDropdown() {
+    document.getElementById('groupDropdown').classList.remove('open');
+    document.getElementById('groupDisplay').classList.remove('open');
+    document.getElementById('newGroupInputWrap').style.display = 'none';
+    document.getElementById('newGroupInput').value = '';
+  }
+
+  function selectGroup(name) {
+    selectedGroup = name;
+    const el = document.getElementById('groupDisplayText');
+    el.textContent = name;
+    el.classList.remove('group-placeholder');
+    closeDropdown();
+  }
+
+  function showNewGroupInput() {
+    document.getElementById('newGroupInputWrap').style.display = 'block';
+    document.getElementById('newGroupInput').focus();
+  }
+
+  function handleNewGroup(e) {
+    if (e.key !== 'Enter') return;
+    const val = e.target.value.trim();
+    if (!val) return;
+    if (!data.find(s => s.group === val)) {
+      data.push({ group: val, colors: [] });
+      save();
+    }
+    selectGroup(val);
+  }
+
+  document.addEventListener('click', e => {
+    const wrapper = document.querySelector('.group-wrapper');
+    if (wrapper && !wrapper.contains(e.target)) closeDropdown();
+  });
+
+  /* ── HEX format ── */
+  function formatHex(input) {
+    let val = input.value.replace(/#/g, '').toUpperCase().replace(/[^0-9A-F]/g, '');
+    input.value = val ? '#' + val : '';
+  }
+
+  /* ── Add color ── */
   function addColor() {
     const hex = document.getElementById('hexInput').value.trim();
-    const name = document.getElementById('nameInput').value.trim() || hex;
+    const name = document.getElementById('nameInput').value.trim();
     const errorMsg = document.getElementById('errorMsg');
 
     if (!/^#[0-9A-Fa-f]{6}$/.test(hex)) {
       errorMsg.style.display = 'inline';
-      document.getElementById('hexInput').style.borderColor = '#ffaaaa';
+      document.getElementById('hexInput').style.borderColor = '#fca5a5';
       setTimeout(() => { errorMsg.style.display = 'none'; document.getElementById('hexInput').style.borderColor = ''; }, 2000);
       return;
     }
 
-    const parts = name.split('/');
-    const groupName = parts.length > 1 ? parts[0] : 'Custom';
-    const existing = data.find(s => s.group === groupName);
-    if (existing) {
-      existing.colors.push({ name: parts.slice(1).join('/') || name, hex });
-    } else {
-      data.push({ group: groupName, colors: [{ name: parts.slice(1).join('/') || name, hex }] });
+    const groupName = selectedGroup || 'Custom';
+    if (!data.find(s => s.group === groupName)) {
+      data.push({ group: groupName, colors: [] });
     }
+    data.find(s => s.group === groupName).colors.push({ name: name || hex, hex });
 
     save(); render();
     document.getElementById('hexInput').value = '';
     document.getElementById('nameInput').value = '';
   }
 
-  document.getElementById('hexInput').addEventListener('keydown', e => { if (e.key === 'Enter') addColor(); });
+  /* ── Remove ── */
+  function removeColor(si, ci) {
+    data[si].colors.splice(ci, 1);
+    if (data[si].colors.length === 0) data.splice(si, 1);
+    save(); render();
+  }
+
+  /* ── Modal ── */
+  function openModal(si, ci) {
+    editTarget = { si, ci };
+    const c = data[si].colors[ci];
+    document.getElementById('modalHex').value = c.hex.toUpperCase();
+    document.getElementById('modalName').value = c.name;
+    document.getElementById('modalPreview').style.background = c.hex;
+    document.getElementById('modalOverlay').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('modalOverlay').classList.remove('open');
+    editTarget = null;
+  }
+
+  function updateModalPreview() {
+    const val = document.getElementById('modalHex').value;
+    if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+      document.getElementById('modalPreview').style.background = val;
+    }
+  }
+
+  function saveModal() {
+    if (!editTarget) return;
+    const { si, ci } = editTarget;
+    const hex = document.getElementById('modalHex').value.trim();
+    const name = document.getElementById('modalName').value.trim();
+
+    if (hex && !/^#[0-9A-Fa-f]{6}$/.test(hex)) {
+      document.getElementById('modalHex').style.borderColor = '#fca5a5';
+      setTimeout(() => document.getElementById('modalHex').style.borderColor = '', 1500);
+      return;
+    }
+
+    if (hex) data[si].colors[ci].hex = hex;
+    if (name) data[si].colors[ci].name = name;
+
+    save(); render(); closeModal();
+  }
+
+  document.getElementById('modalOverlay').addEventListener('click', e => {
+    if (e.target === document.getElementById('modalOverlay')) closeModal();
+  });
 
   render();
 </script>
